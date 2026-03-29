@@ -2,7 +2,13 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+app.options('*', cors());
 app.use(express.json());
 
 app.post('/api/claude', async (req, res) => {
@@ -23,11 +29,12 @@ app.post('/api/claude', async (req, res) => {
     const data = await response.json();
     res.json(data);
   } catch (err) {
+    console.error('Error:', err);
     res.status(500).json({ error: err.message });
   }
 });
 
 app.get('/', (req, res) => res.send('COYU Brand Finder API is running!'));
 
-const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+const PORT = process.env.PORT || 10000;
+app.listen(PORT, '0.0.0.0', () => console.log(`Server running on port ${PORT}`));
